@@ -30,40 +30,63 @@ class NumberExtractor:
             "ten": ["TEN", "Ten"],
         }
 
+        self.filter_approximation = {
+            "around": {
+                "keywords": ["around", "approximately", "about", "close to"],
+                "operator": "=",
+            },
+            "more": {
+                "keywords": ["more than", "greater than", "over", "at least"],
+                "operator": "=>",
+            },
+            "less": {
+                "keywords": ["less than", "under", "below", "at most"],
+                "operator": "=<",
+            },
+        }
+
     def extract(self, sentence: str):
         """
-        Extract numbers (digits or spelled out, 1–10) from a sentence.
-        Returns a list of integers.
+        Extract numbers (digits or spelled out, 1–10) and map context
+        to approximation filters (=, =>, =<).
+        Returns list of tuples: (number, operator).
         """
-        numbers_found = []
+        numbers = set()  # use a set to avoid duplicates
 
-        # Normalize for matching
+        # Normalize
         text = sentence.lower()
 
         # --- 1. Find numeric digits (1–10) ---
         digit_matches = re.findall(r"\b([1-9]|10)\b", text)
-        numbers_found.extend(int(num) for num in digit_matches)
+        numbers.update(int(num) for num in digit_matches)
 
-        # --- 2. Find spelled-out numbers (with expansions) ---
+        # --- 2. Find spelled-out numbers ---
         for word, value in self.word_to_num.items():
-            # Match base word (lowercase)
             if re.search(rf"\b{word}\b", text):
-                numbers_found.append(value)
-
-            # Match expansions (case variations)
+                numbers.add(value)
             for expansion in self.number_expansions.get(word, []):
                 if re.search(rf"\b{expansion}\b", sentence):
-                    numbers_found.append(value)
+                    numbers.add(value)
 
-        return numbers_found
+        # --- 3. Detect context (around/more/less) ---
+        operator = "="  # default
+        for key, mapping in self.filter_approximation.items():
+            for kw in mapping["keywords"]:
+                if kw in text:
+                    operator = mapping["operator"]
+                    break
+
+        # Return list of (number, operator) tuples
+        return [(num, operator) for num in numbers]
 
 # extractor = NumberExtractor()
 
-# print(extractor.extract("I have one hammer and 3 apples."))
-# Output: [1, 3]
+# print(extractor.extract("I have around five years of experience"))
+# [(5, '=')]
 
-# print(extractor.extract("She bought TWO oranges and Ten bananas."))
-# Output: [2, 10]
+# print(extractor.extract("I have more than three years of experience"))
+# [(5, '=>')]
 
-# print(extractor.extract("We saw eight birds."))
-# Output: [8]
+# print(extractor.extract("My experience is less than TWO years"))
+# [(5, '=<')]
+
