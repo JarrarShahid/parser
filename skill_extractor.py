@@ -1,4 +1,4 @@
-skills_dict = ["Google Cloud Platform (GCP)", "Travis CI", "Ethereum", "ELK Stack", "Keras", "Pascal", "Scheme", "Apache Spark", 
+skills_list = ["Google Cloud Platform (GCP)", "Travis CI", "Ethereum", "ELK Stack", "Keras", "Pascal", "Scheme", "Apache Spark", 
 "Forth", "MXNet", "Matplotlib", "Bash", "Firestore", "Microservices Architecture", "CouchDB", "FastAPI", "Kotlin Multiplatform", 
 "InfluxDB", "Data Warehousing", "Storybook", "Bootstrap","RAG (Retrieval-Augmented Generation)", "Bitbucket", "Groovy", 
 "React Native", "Integration Testing", "Kubernetes", "Code Review Practices", "GitLab CI/CD", "Linkerd", "Security",
@@ -32,13 +32,14 @@ skills_dict = ["Google Cloud Platform (GCP)", "Travis CI", "Ethereum", "ELK Stac
 "WebSockets", "Vue.js", "Unreal Engine", "Appium", "React", "Ansible", "Eclipse", "Go", "Power BI", "Handlebars.js", 
 "Visual Studio Code", "Knockout.js", "Deep Learning", "Object-Oriented Programming (OOP)", "Puppet", "Hugging Face Transformers", 
 "Lisp", "Android", "ASP.NET Core", "Lua", "Sybase", "Apache NiFi", "F#", "Prometheus", "Amazon Web Services (AWS)", "Plotly", 
-"Apache Maven", "PyTorch", "Oracle Cloud", "Jenkins", "LightGBM", "VMware Cloud", "Nest.Js"
+"Apache Maven", "PyTorch", "Oracle Cloud", "Jenkins", "LightGBM", "VMware Cloud", "Nest.Js","Electron.js", "Molecular.js",
 ]
 
 
-skill_expansions = {
+skills_expansions = {
     "gcp": ["GCP", "Google Cloud", "Google Cloud Platform", "Google Cloud Platform (GCP)"],
     "travisci": ["Travis", "TravisCI", "Travis CI"],
+    "ASP.NET Core": ["ASP . NET Core"],
     "ethereum": ["Ethereum", "ETH", "ethereum"],
     "elk_stack": ["ELK", "ELK Stack", "Elastic Stack"],
     "keras": ["Keras", "keras"],
@@ -170,7 +171,7 @@ skill_expansions = {
     "illustrator": ["Illustrator", "Adobe Illustrator"],
     "indesign": ["InDesign", "Adobe InDesign"],
     "tensorflow": ["TensorFlow", "tensorflow"],
-    "pytorch": ["PyTorch", "torch", "pytorch"],
+    "pytorch": ["PyTorch", "torch", "pytorch", "Py Torch"],
     "keras": ["Keras", "keras"],
     "scikitlearn": ["Scikit-learn", "sklearn", "scikit learn"],
     "theano": ["Theano", "theano"],
@@ -406,30 +407,56 @@ skill_expansions = {
     "bigquery": ["Google BigQuery", "bigquery"],
     "tableau": ["Tableau", "tableau"],
     "qlikview": ["QlikView", "qlikview"],
-    "powerbi": ["Power BI", "powerbi"]
+    "powerbi": ["Power BI", "powerbi"],
+    "Nest.Js": ["nest", "nest.js", "nestjs"],
+    "Electron.js": ["electron", "electron.js", "electronjs"], 
+    "Molecular.js": ["molecular", "molecular.js", "molecularjs"]
 }
 
-import re
+import spacy
+from spacy.matcher import PhraseMatcher
 
-def extract_skills(text: str, skills_list: list, skill_expansions: dict):
-    """
-    Extract canonical skills from text using expansions for matching.
-    Returns a list of canonical skills.
-    """
-    text_lower = text.lower()
-    found_skills = set()
 
-    for skill in skills_list:
-        expansions = skill_expansions.get(skill, [skill])
-        for term in expansions:
-            pattern = r"\b" + re.escape(term.lower()) + r"\b"
-            if re.search(pattern, text_lower):
-                found_skills.add(skill)  # store canonical skill
-                break  # stop checking other expansions for this skill
+class SkillExtractor:
+    def __init__(self, skills_list, skills_expansions=None):
+        """
+        :param skills_list: List of base skills (e.g., ["python", "java"])
+        :param skills_expansions: Dict mapping skill -> list of expansions/synonyms
+                                  e.g., {"python": ["python3", "py"], "java": ["java se", "java ee"]}
+        """
+        self.nlp = spacy.load("en_core_web_sm")
+        self.matcher = PhraseMatcher(self.nlp.vocab, attr="LOWER")
+        self.skills_list = skills_list
+        self.skills_expansions = skills_expansions or {}
+        self._build_matcher()
 
-    return list(found_skills)
+    def _build_matcher(self):
+        """Builds PhraseMatcher patterns."""
+        for skill in self.skills_list:
+            expansions = self.skills_expansions.get(skill, [skill])
+            patterns = [self.nlp.make_doc(term) for term in expansions]
+            self.matcher.add(skill, patterns)
 
-sentence = "I am looking For a Developer skilled in Vue.js, MongoDB, Express.js, Node.Js, Nest.Js"
+    def extract(self, text: str):
+        """Extract skills from given text."""
+        doc = self.nlp(text)
+        found_skills = {
+            self.nlp.vocab.strings[match_id] for match_id, start, end in self.matcher(doc)
+        }
+        return list(found_skills)
 
-print(extract_skills(sentence, skills_dict, skill_expansions))
+# extractor = SkillExtractor(skills_list, skills_expansions)
+# print(extractor.extract("""While building a microservices architecture using Kotlin Multiplatform for a cross-platform mobile app, 
+# I utilized Android and Electron.js for the frontend, integrating Apache NiFi for real-time data flow, Apache Spark and 
+# Prometheus for data processing and monitoring, and PyTorch and LightGBM for machine learning models, deploying them on 
+# Amazon Web Services (AWS) and Oracle Cloud for scalability. The backend, built with Nest.js, FastAPI, and ASP.NET Core, 
+# leverages a CouchDB database and Firestore for data storage, while Jenkins, Travis CI, and Apache Maven handle continuous 
+# integration and deployment pipelines. To ensure compatibility across different platforms, I also incorporated Google 
+# Cloud Platform (GCP), VMware Cloud, and Ethereum for decentralized features, along with real-time data visualization using 
+# Plotly and Matplotlib. The system also supports querying with Sybase, and the app's user interface was enhanced using Scheme 
+# and Lisp for functional programming tasks, with Forth and Pascal for lower-level optimization, all orchestrated in a 
+# cloud-native environment with ELK Stack and automated through Bash scripts."""))
+
+
+
 

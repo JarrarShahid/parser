@@ -246,27 +246,45 @@ industry_type_expansion = {
     ]
 }
 
-import re
+import spacy
+from spacy.matcher import PhraseMatcher
 
-def extract_industries(text: str, industry_type: list, industry_type_expansion: dict):
-    """
-    Extract canonical industry types from text using expansions for matching.
-    Returns a list of canonical industry types.
-    """
-    text_lower = text.lower()
-    found_industries = set()
+class IndustryExtractor:
+    def __init__(self, industries, industry_expansions=None):
+        """
+        Initialize the extractor with industries and their expansions.
+        :param industries: list of canonical industries
+        :param industry_expansions: dict mapping canonical industries -> list of expansions
+        """
+        self.nlp = spacy.load("en_core_web_sm")
+        self.matcher = PhraseMatcher(self.nlp.vocab, attr="LOWER")
+        self.industry_expansions = industry_expansions or {}
 
-    for industry in industry_type:
-        expansions = industry_type_expansion.get(industry, [industry])
-        for term in expansions:
-            pattern = r"\b" + re.escape(term.lower()) + r"\b"
-            if re.search(pattern, text_lower):
-                found_industries.add(industry)  # add canonical industry name
-                break  # stop after first match for this industry
+        self._build_matcher(industries)
 
-    return list(found_industries)
+    def _build_matcher(self, industries):
+        """Build PhraseMatcher with industries and their expansions."""
+        for industry in industries:
+            expansions = self.industry_expansions.get(industry, [industry])
+            patterns = [self.nlp.make_doc(term) for term in expansions]
+            self.matcher.add(industry, patterns)
 
-sentence = "He has worked in Fintech and Health Care startups, and also in Gaming industry."
+    def extract(self, text):
+        """
+        Extract canonical industries from text.
+        :param text: input string
+        :return: list of canonical industries found
+        """
+        doc = self.nlp(text)
+        found_industries = {
+            self.nlp.vocab.strings[match_id] for match_id, start, end in self.matcher(doc)
+        }
+        return list(found_industries)
 
-print(extract_industries(sentence, industry_type, industry_type_expansion))
+
+# extractor = IndustryExtractor(industry_type, industry_type_expansion)
+
+# text = "The integration of agriculture, automotive, aerospace, banking, biotechnology, chemical, construction, consulting, consumer goods, defense, and e-commerce sectors has accelerated innovation across industries, driving global economic growth and technological advancements."
+# print(extractor.extract(text))
+
 

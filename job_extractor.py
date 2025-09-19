@@ -344,26 +344,54 @@ job_title_expansion = {
 }
 
 
-import re
+import spacy
+from spacy.matcher import PhraseMatcher
 
-def extract_job_titles(text: str, job_titles: list, job_title_expansions: dict):
-    """
-    Extract canonical job titles from text using expansions for matching.
-    Returns a list of canonical job titles.
-    """
-    text_lower = text.lower()
-    found_titles = set()
+class JobTitleExtractor:
+    def __init__(self, job_titles, job_title_expansion=None):
+        """
+        Initialize the extractor with job titles and their expansions.
+        :param job_titles: list of canonical job titles
+        :param job_title_expansions: dict mapping canonical titles -> list of expansions
+        """
+        self.nlp = spacy.load("en_core_web_sm")
+        self.matcher = PhraseMatcher(self.nlp.vocab, attr="LOWER")
+        self.job_title_expansion = job_title_expansion or {}
+        
+        self._build_matcher(job_titles)
 
-    for title in job_titles:
-        expansions = job_title_expansions.get(title, [title])
-        for term in expansions:
-            pattern = r"\b" + re.escape(term.lower()) + r"\b"
-            if re.search(pattern, text_lower):
-                found_titles.add(title)  # add canonical title
-                break  # no need to check more expansions for this title
+    def _build_matcher(self, job_titles):
+        """Build PhraseMatcher with job titles and their expansions."""
+        for title in job_titles:
+            expansions = self.job_title_expansion.get(title, [title])
+            patterns = [self.nlp.make_doc(term) for term in expansions]
+            self.matcher.add(title, patterns)
 
-    return list(found_titles)
+    def extract(self, text):
+        """
+        Extract canonical job titles from text.
+        :param text: input string
+        :return: list of canonical job titles found
+        """
+        doc = self.nlp(text)
+        found_titles = {
+            self.nlp.vocab.strings[match_id] for match_id, start, end in self.matcher(doc)
+        }
+        return list(found_titles)
 
-sentence = "We are hiring a Software Developer and a Frontend Developer with experience in AI."
 
-print(extract_job_titles(sentence, job_titles, job_title_expansion))
+# extractor = JobTitleExtractor(job_titles, job_title_expansion)
+
+# text = """As a Software Engineer with expertise as both a Frontend Developer and Backend Developer,  
+# I have experience across a range of roles, including Full Stack Developer, Mobile App Developer (iOS and Android), 
+# and specialized technologies like React Developer, Angular Developer, and Vue.js Developer. I've also worked with server-side 
+# technologies as a Node.js Developer, Python Developer, Java Developer, C++ Developer, 
+# C# Developer, and PHP Developer, alongside Ruby Developer, Go Developer, Kotlin Developer, 
+# and Swift Developer. In addition, my background includes work as a Machine Learning Engineer, Deep Learning Engineer, 
+# and AI Engineer, as well as data-focused roles such as Data Scientist, Data Analyst, Business Intelligence Analyst, and 
+# Data Engineer. As an expert in database management, I've been a Database Administrator and SQL Developer, with extensive 
+# experience in Cloud Engineering, Cloud Solutions Architecture, and AWS Engineering."""
+# print(extractor.extract(text))
+# Output: ['Software Engineer', 'Data Scientist', 'Frontend Developer']
+
+
