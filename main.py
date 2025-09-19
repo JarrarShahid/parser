@@ -138,12 +138,6 @@ def build_crust_filters(extracted_experience, extracted_industry, extracted_job_
     return json.dumps(filters, indent=4)
 
 
-# ---------------- Example usage ----------------
-extracted_experience = [(2, '=')]
-extracted_industry = ['Health Care']
-extracted_job_title = ['Software Engineer']
-extracted_location = ['Karachi', 'Pakistan']
-extracted_skills = ['Python', 'JavaScript', 'Spring']
 
 filters_json = build_crust_filters(
     extracted_experience,
