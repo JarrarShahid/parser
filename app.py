@@ -4,9 +4,6 @@ from typing import Dict, Any
 import uvicorn
 from function import extract_candidate_info, build_crust_filters
 
-
-
-
 app = FastAPI()
 
 
