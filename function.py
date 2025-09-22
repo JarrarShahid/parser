@@ -67,14 +67,14 @@ def build_crust_filters(extracted: dict) -> dict:
     # --- Location ---
     if extracted.get("location"):
         conditions.append({
-            "op": "or",
+            "op": "and",
             "conditions": build_conditions(extracted["location"], "region")
         })
 
     # --- Skills ---
     if extracted.get("skills"):
         conditions.append({
-            "op": "or",
+            "op": "and",
             "conditions": build_conditions(extracted["skills"], "skills")
         })
 

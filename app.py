@@ -124,10 +124,11 @@ def search_with_filters_ai(request: CandidateRequest):
 
         # 1) Get extracted info from the AI
         extracted_info = call_openai_extract(request.text)
+        print(extracted_info)
 
         # 2) Build crust filters locally
         filters = build_crust_filters(extracted_info)
-
+        print(filters)
         # 3) Forward to Crust
         headers = {
             "Content-Type": "application/json",
