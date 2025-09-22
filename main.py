@@ -3,6 +3,7 @@ from experience_extractor import NumberExtractor
 from skill_extractor import SkillExtractor, skills_expansions, skills_list
 from industry_extractor import IndustryExtractor, industry_type_expansion, industry_type
 from job_extractor import JobTitleExtractor, job_title_expansion, job_titles
+import json
 
 job_title_expansion = job_title_expansion
 job_titles = job_titles
@@ -40,7 +41,7 @@ print(extracted_job_title)
 print(extracted_location)
 print(extracted_skills)
 
-import json
+
 
 def build_crust_filters(extracted_experience, extracted_industry, extracted_job_title,
                         extracted_location, extracted_skills):
@@ -139,12 +140,3 @@ def build_crust_filters(extracted_experience, extracted_industry, extracted_job_
 
 
 
-filters_json = build_crust_filters(
-    extracted_experience,
-    extracted_industry,
-    extracted_job_title,
-    extracted_location,
-    extracted_skills
-)
-
-print(filters_json)
