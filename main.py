@@ -10,9 +10,9 @@ skills_expansions = skills_expansions
 skills_list = skills_list
 industry_type_expansion = industry_type_expansion
 industry_type = industry_type
-text = "Find me a Software Engineer with two years of experience, also skilled in Python, Spring, JavaScript having experience in Health Care and located in Karachi, Pakistan."
+# text = "Find me a Software Engineer with two years of experience, also skilled in Python, Spring, JavaScript having experience in Health Care and located in Karachi, Pakistan."
 # text = "Find me a healthcare it specialist with five years of experience, also skilled in Express.js, VHDL, CI/CD Pipelines, SVG Animations having experience in e-commerce and located in France."
-
+text = "Find software engineer for less than 3 years experience in react and node ,location should be Germany"
 # Experience
 extractor_experience = NumberExtractor()
 extracted_experience = extractor_experience.extract(text)
