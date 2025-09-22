@@ -90,7 +90,7 @@ def build_crust_filters_from_text(text):
 
 # ---------------- Example usage ----------------
 if __name__ == "__main__":
-    text = "I have around five years of experience as a Software Engineer in Health Care industry at Karachi, Pakistan, with skills in Python, JavaScript, and Spring."
-
+    # text = "I have around five years of experience as a Software Engineer in Health Care industry at Karachi, Pakistan, with skills in Python, JavaScript, and Spring."
+    text = "Find software engineer for less than 3 years experience in react and node ,location should be Fulda Germany"
     filters_json = build_crust_filters_from_text(text)
     print(filters_json)

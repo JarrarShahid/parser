@@ -32,7 +32,7 @@ skills_list = ["Google Cloud Platform (GCP)", "Travis CI", "Ethereum", "ELK Stac
 "WebSockets", "Vue.js", "Unreal Engine", "Appium", "React", "Ansible", "Eclipse", "Go", "Power BI", "Handlebars.js", 
 "Visual Studio Code", "Knockout.js", "Deep Learning", "Object-Oriented Programming (OOP)", "Puppet", "Hugging Face Transformers", 
 "Lisp", "Android", "ASP.NET Core", "Lua", "Sybase", "Apache NiFi", "F#", "Prometheus", "Amazon Web Services (AWS)", "Plotly", 
-"Apache Maven", "PyTorch", "Oracle Cloud", "Jenkins", "LightGBM", "VMware Cloud", "Nest.Js","Electron.js", "Molecular.js",
+"Apache Maven", "PyTorch", "Oracle Cloud", "Jenkins", "LightGBM", "VMware Cloud", "Nest.Js","Electron.js", "Molecular.js", "node"
 ]
 
 
@@ -446,16 +446,7 @@ class SkillExtractor:
         return list(found_skills)
 
 # extractor = SkillExtractor(skills_list, skills_expansions)
-# print(extractor.extract("""While building a microservices architecture using Kotlin Multiplatform for a cross-platform mobile app, 
-# I utilized Android and Electron.js for the frontend, integrating Apache NiFi for real-time data flow, Apache Spark and 
-# Prometheus for data processing and monitoring, and PyTorch and LightGBM for machine learning models, deploying them on 
-# Amazon Web Services (AWS) and Oracle Cloud for scalability. The backend, built with Nest.js, FastAPI, and ASP.NET Core, 
-# leverages a CouchDB database and Firestore for data storage, while Jenkins, Travis CI, and Apache Maven handle continuous 
-# integration and deployment pipelines. To ensure compatibility across different platforms, I also incorporated Google 
-# Cloud Platform (GCP), VMware Cloud, and Ethereum for decentralized features, along with real-time data visualization using 
-# Plotly and Matplotlib. The system also supports querying with Sybase, and the app's user interface was enhanced using Scheme 
-# and Lisp for functional programming tasks, with Forth and Pascal for lower-level optimization, all orchestrated in a 
-# cloud-native environment with ELK Stack and automated through Bash scripts."""))
+# print(extractor.extract("""Node"""))
 
 
 

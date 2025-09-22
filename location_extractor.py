@@ -95,7 +95,7 @@ class LocationExtractor:
                 country_map[self._safe_lower(k)] = v
         else:
             fallback = ["Pakistan", "United States", "United Kingdom", "India",
-                        "Brazil", "Canada", "Australia", "Germany", "France", "China"]
+                        "Brazil", "Canada", "Australia", "Germany", "France", "China", "Germany"]
             for name in fallback:
                 country_map[self._safe_lower(name)] = name
             for k, v in self._MANUAL_COUNTRY_ALIASES.items():
@@ -119,7 +119,7 @@ class LocationExtractor:
                 max_city_token_len = max(len(k.split()) for k in cities_map.keys())
         else:
             fallback_cities = ["New York", "Los Angeles", "Karachi", "Lahore", "London",
-                               "Paris", "Berlin", "Tokyo", "São Paulo", "Sydney", "Toronto"]
+                               "Paris", "Berlin", "Tokyo", "São Paulo", "Sydney", "Toronto", "Fulda"]
             for name in fallback_cities:
                 cities_map[self._safe_lower(name)].append(name)
             max_city_token_len = max(len(k.split()) for k in cities_map.keys())
@@ -182,5 +182,5 @@ class LocationExtractor:
 
 
 # extractor = LocationExtractor()
-# locations = extractor.extract("She lives in Karachi, Pakistan.")
+# locations = extractor.extract("She lives in Fulda.")
 # print(locations)  # ['Karachi', 'Pakistan']
