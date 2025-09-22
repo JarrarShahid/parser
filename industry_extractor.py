@@ -12,7 +12,7 @@ industry_type = [
     "Telecommunications","DevOps","Database Management","Business Intelligence","SaaS (Software as a Service)",
     "PaaS (Platform as a Service)","IaaS (Infrastructure as a Service)","Cloud Security","Digital Marketing Technology",
     "AdTech","InsurTech","Automotive Software","Smart Cities","Industrial Automation","Quantum Computing","5G Technology",
-    "Wearable Technology","IT Consulting","UI/UX Design","Open Source Software", "Health Care"
+    "Wearable Technology","IT Consulting","UI/UX Design","Open Source Software", "Health Care", "IT" 
 ]
 
 industry_type_expansion = {
