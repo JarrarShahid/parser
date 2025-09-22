@@ -32,7 +32,7 @@ skills_list = ["Google Cloud Platform (GCP)", "Travis CI", "Ethereum", "ELK Stac
 "WebSockets", "Vue.js", "Unreal Engine", "Appium", "React", "Ansible", "Eclipse", "Go", "Power BI", "Handlebars.js", 
 "Visual Studio Code", "Knockout.js", "Deep Learning", "Object-Oriented Programming (OOP)", "Puppet", "Hugging Face Transformers", 
 "Lisp", "Android", "ASP.NET Core", "Lua", "Sybase", "Apache NiFi", "F#", "Prometheus", "Amazon Web Services (AWS)", "Plotly", 
-"Apache Maven", "PyTorch", "Oracle Cloud", "Jenkins", "LightGBM", "VMware Cloud", "Nest.Js","Electron.js", "Molecular.js", "node"
+"Apache Maven", "PyTorch", "Oracle Cloud", "Jenkins", "LightGBM", "VMware Cloud", "Nest.Js","Electron.js", "Molecular.js", "node", "AI/ML", "MERN"
 ]
 
 
