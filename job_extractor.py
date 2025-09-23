@@ -115,11 +115,11 @@ job_titles = ["Software Engineer", "Software Developer","Frontend Developer","Ba
 "Computational Scientist", "Parallel Computing Engineer", "Distributed Systems Engineer"]
 
 job_title_expansion = {
-    "software engineer": [
-        "software engineer", "software developer", "application developer", "programmer",
-        "full stack developer", "full stack engineer", "frontend developer", "frontend engineer",
-        "backend developer", "backend engineer", "frontend architect", "backend architect"
-    ],
+        "software engineer": [
+            "software engineer", "software developer", "application developer", "programmer",
+            "full stack developer", "full stack engineer", "frontend developer", "frontend engineer",
+            "backend developer", "backend engineer", "frontend architect", "backend architect"
+        ],
     "mobile developer": [
         "mobile developer", "mobile app developer", "ios developer", "android developer",
         "flutter developer", "react native developer", "cross-platform mobile developer",

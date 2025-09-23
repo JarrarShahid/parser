@@ -59,9 +59,16 @@ def build_crust_filters(extracted: dict) -> dict:
 
     # --- Job Title ---
     if extracted.get("job_title"):
+        job_title_conditions = []
+        for jt in extracted["job_title"]:
+            expansions = job_title_expansion.get(jt.lower(), [jt])  # ensure lowercase key lookup
+            job_title_conditions.extend(
+                build_conditions(expansions, "current_employers.title")
+            )
+        # OR across all expanded titles
         conditions.append({
             "op": "or",
-            "conditions": build_conditions(extracted["job_title"], "current_employers.title")
+            "conditions": job_title_conditions
         })
 
     # --- Location ---
@@ -73,11 +80,83 @@ def build_crust_filters(extracted: dict) -> dict:
 
     # --- Skills ---
     if extracted.get("skills"):
+        skill_conditions = []
+        for sk in extracted["skills"]:
+            expansions = skills_expansions.get(sk.lower(), [sk])  # ensure lowercase key lookup
+            skill_conditions.append({
+                "op": "or",
+                "conditions": build_conditions(expansions, "skills")
+            })
+        # AND between different skill groups
         conditions.append({
             "op": "and",
-            "conditions": build_conditions(extracted["skills"], "skills")
+            "conditions": skill_conditions
         })
-
+    
+    # --- Employers ---
+    if extracted.get("all_employers.name"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["all_employers.name"], "all_employers.name")
+        })
+    
+    # --- Employer Title ---
+    if extracted.get("all_employers.title"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["all_employers.title"], "all_employers.title")
+        })
+    
+    # --- Education-Degree ---
+    if extracted.get("education_background.degree_name"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["education_background.degree_name"], "education_background.degree_name")
+        })
+    
+    # --- Education-Institute ---
+    if extracted.get("education_background.institute_name"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["education_background.institute_name"], "education_background.institute_name")
+        })
+    
+    # --- Education-Field ---
+    if extracted.get("education_background.field_of_study"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["education_background.field_of_study"], "education_background.field_of_study")
+        })
+    
+    # --- Honors-Title ---
+    if extracted.get("honors.title"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["honors.title"], "honors.title")
+        })
+    
+    # --- Honors-Institution ---
+    if extracted.get("honors.issuer"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["honors.issuer"], "honors.issuer")
+        })
+    
+    # --- Certificate ---
+    if extracted.get("certifications.name"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["certifications.name"], "certifications.name")
+        })
+    
+    # --- C.I.Body ---
+    if extracted.get("certifications.issuer_organization"):
+        conditions.append({
+            "op": "and",
+            "conditions": build_conditions(extracted["certifications.issuer_organization"], "certifications.issuer_organization")
+        })
+    
+    
     # ✅ Correct structure: filters + siblings limit/preview
     return {
         "filters": {"op": "and", "conditions": conditions},
@@ -158,8 +237,9 @@ def call_openai_extract(query_text: str, model: str = OPENAI_MODEL, api_key: str
         # Provide helpful debug in 502
         raise HTTPException(status_code=502, detail="OpenAI response did not contain valid JSON as expected.")
 
-    # Basic validation: ensure all five keys exist and are lists
-    expected_keys = ["experience", "industry", "job_title", "location", "skills"]
+    # Basic validation: ensure all five keys exist and are lists 
+    # TODO: all_employers
+    expected_keys = ["experience", "industry", "job_title", "location", "skills", "all_employers.name", "all_employers.title", "education_background.degree_name",   "education_background.institute_name", "education_background.field_of_study", "honors.title", "honors.issuer", "certifications.name", "certifications.issuer_organization"]
     for k in expected_keys:
         if k not in data or not isinstance(data[k], list):
             raise HTTPException(status_code=502, detail=f"OpenAI returned invalid/missing key: {k}")
